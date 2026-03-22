@@ -1,0 +1,37 @@
+\section{Introduction}
+\label{sec:intro}
+
+The convergence of Open RAN (O-RAN) principles with emerging 6G
+technologies is reshaping how wireless networks are designed, deployed,
+and optimised~\cite{oran_alliance2022,6g_survey2023}.
+By disaggregating the radio access network into open, interoperable
+components and exposing standardised interfaces (E2, A1, O1), O-RAN
+creates a programmable substrate on which data-driven control loops can
+be built and evaluated.
+
+NS-3 has long served as the de-facto open-source network simulator for
+protocol-level research~\cite{ns3_main}; however, an integrated
+framework that combines NS-3 with an O-RAN stack and 6G features---THz
+channels, ultra-massive MIMO, and MEC---has been lacking.
+This paper fills that gap.
+
+Our contributions are:
+\begin{enumerate}
+  \item A modular NS-3 O-RAN 6G integration framework that implements the
+        near-RT RIC, E2 interface stubs, and xApp abstractions.
+  \item An RL-based handover optimisation xApp and a federated learning
+        (FL) sub-framework for distributed KPI prediction.
+  \item A digital-twin module for proactive KPI forecasting and
+        control-loop validation.
+  \item Reproducible simulation campaigns with automated result export
+        (CSV/JSON) and LaTeX paper asset generation.
+\end{enumerate}
+
+The remainder of the paper is organised as follows.
+Section~\ref{sec:related} surveys related work.
+Section~\ref{sec:architecture} describes the system architecture.
+Section~\ref{sec:algorithms} details the algorithms.
+Section~\ref{sec:setup} presents the experimental setup.
+Section~\ref{sec:results} reports and analyses results.
+Section~\ref{sec:discussion} discusses findings and limitations.
+Section~\ref{sec:conclusion} concludes.

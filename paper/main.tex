@@ -1,0 +1,72 @@
+%% IEEE Transactions / Conference paper – NS-3 O-RAN 6G Integration
+%% Build:  latexmk -pdf main.tex   (or  make  inside paper/)
+\documentclass[conference]{IEEEtran}
+
+%% ── Packages ─────────────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds,
+                decorations.pathreplacing, calc}
+
+%% ── Meta ─────────────────────────────────────────────────────────────────────
+\title{NS-3 O-RAN 6G Integration: A Simulation Framework for
+       AI-Driven Open RAN with Multi-Access Edge Computing}
+
+\author{
+  \IEEEauthorblockN{Sachin Deshik}
+  \IEEEauthorblockA{%
+    \textit{Department of Electrical \& Computer Engineering}\\
+    \textit{Institution Name}\\
+    City, Country\\
+    email@institution.edu}
+}
+
+\begin{document}
+
+\maketitle
+
+%% ── Abstract ─────────────────────────────────────────────────────────────────
+\begin{abstract}
+\input{sections/abstract.tex}
+\end{abstract}
+
+\begin{IEEEkeywords}
+O-RAN, 6G, NS-3, multi-access edge computing, reinforcement learning,
+digital twin, handover optimisation, federated learning, network slicing
+\end{IEEEkeywords}
+
+%% ── Sections ─────────────────────────────────────────────────────────────────
+\input{sections/introduction.tex}
+\input{sections/related_work.tex}
+\input{sections/system_architecture.tex}
+\input{sections/algorithms.tex}
+\input{sections/experimental_setup.tex}
+\input{sections/results.tex}
+\input{sections/discussion.tex}
+\input{sections/conclusion.tex}
+
+%% ── Acknowledgments ──────────────────────────────────────────────────────────
+\section*{Acknowledgment}
+% TODO: add funding sources / collaborators.
+The authors thank the NS-3 consortium and the O-RAN Alliance for open-source
+tooling and specifications that enabled this work.
+
+%% ── Bibliography ─────────────────────────────────────────────────────────────
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

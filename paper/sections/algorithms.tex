@@ -1,0 +1,82 @@
+\section{Algorithms and Methods}
+\label{sec:algorithms}
+
+\subsection{Baseline: Proportional Fair Scheduling}
+The PF scheduler~\cite{prop_fair_sched} allocates PRBs to UE $k$ on
+subframe $t$ by maximising the ratio of instantaneous to average
+throughput:
+\begin{equation}
+  k^{*} = \arg\max_{k} \frac{r_k(t)}{\bar{R}_k(t)},
+  \label{eq:pf}
+\end{equation}
+where $r_k(t)$ is the instantaneous achievable rate and $\bar{R}_k(t)$
+is the exponentially weighted moving average.
+
+\subsection{Handover Decision: Deep Q-Network}
+The handover optimisation problem is formulated as a Markov Decision
+Process (MDP):
+\begin{itemize}
+  \item \textbf{State} $s_t$: vector of RSRP/RSRQ/SINR measurements from
+        all serving and neighbouring cells for each UE.
+  \item \textbf{Action} $a_t$: handover to target gNB or \emph{stay}.
+  \item \textbf{Reward} $r_t$: post-handover SINR improvement minus
+        handover cost (proportional to \texttt{latency\_ms}).
+\end{itemize}
+
+Algorithm~\ref{alg:dqn} summarises the DQN training loop.
+
+\begin{algorithm}
+\caption{DQN Handover Optimisation}
+\label{alg:dqn}
+\begin{algorithmic}[1]
+\STATE Initialise replay buffer $\mathcal{D}$, Q-network $Q_\theta$,
+       target network $Q_{\bar\theta} \leftarrow Q_\theta$
+\FOR{episode $e = 1$ \TO $E$}
+  \STATE Reset environment; observe $s_1$
+  \FOR{step $t = 1$ \TO $T$}
+    \STATE Select $a_t$ via $\varepsilon$-greedy policy from $Q_\theta(s_t,\cdot)$
+    \STATE Execute $a_t$; observe $r_t$, $s_{t+1}$
+    \STATE Store $(s_t, a_t, r_t, s_{t+1})$ in $\mathcal{D}$
+    \IF{$|\mathcal{D}| \geq B$}
+      \STATE Sample mini-batch of size $B$ from $\mathcal{D}$
+      \STATE Compute targets $y_j = r_j + \gamma \max_{a'} Q_{\bar\theta}(s_{j+1}, a')$
+      \STATE Update $\theta$ by minimising $\|Q_\theta(s_j,a_j) - y_j\|^2$
+      \STATE Periodically sync $Q_{\bar\theta} \leftarrow Q_\theta$
+    \ENDIF
+  \ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Federated Learning: FedAvg}
+Each gNB $i$ trains a local model $w_i$ on its own measurement window and
+sends the gradient update $\Delta w_i$ to the FL xApp.
+The global model is updated as:
+\begin{equation}
+  w_{\text{global}} \leftarrow \sum_{i=1}^{N} \frac{n_i}{n} \, w_i,
+  \label{eq:fedavg}
+\end{equation}
+where $n_i$ is the number of local samples and $n = \sum_i n_i$.
+The global model is broadcast back to all gNBs at the end of each round.
+
+\subsection{Digital Twin: KPI Prediction}
+The digital twin maintains a sliding window of the last $W$ measurements
+and fits a gradient-boosted regression model to predict the KPI vector
+$({\rm throughput}, {\rm latency}, {\rm SINR})$ one step ahead.
+Let $\hat{y}_{t+1} = f_\phi(x_t)$ be the prediction; an action $a$ is
+rejected by the gating function $g$ if:
+\begin{equation}
+  g(a) = \mathbf{1}\!\left[
+    \hat{y}_{t+1}^{(a)} < \hat{y}_{t+1}^{(\text{noop})} - \delta
+  \right],
+  \label{eq:twin_gate}
+\end{equation}
+where $\delta$ is a configurable degradation tolerance.
+
+\subsection{Handover Decision Baselines}
+Three baseline policies are compared:
+\begin{enumerate}
+  \item \textbf{Distance-Based}: hand over to the geographically nearest gNB.
+  \item \textbf{RSRP-Based}: hand over to the gNB with highest measured RSRP.
+  \item \textbf{RL-Optimised} (proposed): DQN policy described above.
+\end{enumerate}

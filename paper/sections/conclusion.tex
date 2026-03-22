@@ -1,0 +1,23 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper presented an open-source NS-3 O-RAN 6G integration framework
+that unifies a near-RT RIC with AI-driven xApps, a digital-twin module,
+and an MEC service layer.
+Through systematic simulation campaigns, we demonstrated that the
+RL-Optimised handover policy reduces median handover latency, that
+federated learning enables collaborative KPI prediction without centralising
+raw measurements, and that the digital twin provides an effective safety
+gate for RL actions.
+
+The fully automated paper-generation pipeline---from NS-3 simulation
+outputs to compiled PDF---enables rapid iteration and reproducible
+reporting.
+All artefacts are available at \url{https://github.com/sachin-deshik-10/NS3-OPENRAN-6G-INTEGRATION}.
+
+The framework is designed to be extensible: new xApps, channel models, and
+MEC services can be added with minimal changes to the simulation core,
+and the asset generator automatically incorporates new result files on
+the next run.
+We hope this work lowers the barrier for O-RAN/6G research using NS-3 and
+encourages the community to build on and contribute to it.

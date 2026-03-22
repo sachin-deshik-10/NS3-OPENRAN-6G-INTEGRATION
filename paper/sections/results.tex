@@ -1,0 +1,56 @@
+\section{Results}
+\label{sec:results}
+
+\input{sections/auto_results.tex}
+
+\subsection{Handover Performance}
+Table~\ref{tab:handover_kpi} compares the three handover policies across
+the pedestrian and vehicular scenarios.
+
+\input{tables/handover_kpi.tex}
+
+Fig.~\ref{fig:latency_cdf} shows the CDF of handover latency for all three
+algorithms in the pedestrian scenario.
+
+\begin{figure}[htbp]
+  \centering
+  \input{figures/latency_cdf.tex}
+  \caption{CDF of handover latency for Distance-Based, RSRP-Based, and
+           RL-Optimised policies (pedestrian scenario).}
+  \label{fig:latency_cdf}
+\end{figure}
+
+\subsection{Throughput vs.\ Offered Load}
+Fig.~\ref{fig:throughput_load} illustrates how aggregate throughput
+scales with the number of active UEs under the three policies.
+
+\begin{figure}[htbp]
+  \centering
+  \input{figures/throughput_vs_load.tex}
+  \caption{Aggregate throughput vs.\ number of active UEs.}
+  \label{fig:throughput_load}
+\end{figure}
+
+\subsection{RSRP/SINR Time Series}
+Fig.~\ref{fig:rsrp_timeseries} shows representative RSRP and SINR
+trajectories for a single UE during a handover event.
+
+\begin{figure}[htbp]
+  \centering
+  \input{figures/rsrp_timeseries.tex}
+  \caption{RSRP and SINR time series for UE~0 illustrating a handover
+           event (pedestrian scenario).}
+  \label{fig:rsrp_timeseries}
+\end{figure}
+
+\subsection{MEC Service Performance}
+Table~\ref{tab:mec_kpi} summarises MEC service utilisation and latency.
+
+\input{tables/mec_kpi.tex}
+
+\subsection{Federated Learning Convergence}
+The FL xApp converged after the episode reported in
+Table~\ref{tab:ml_summary} with the final reward and prediction accuracy
+summarised therein.
+
+\input{tables/ml_summary.tex}

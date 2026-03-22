@@ -1,0 +1,43 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{RL vs.\ Rule-Based Handover Policies}
+The RL-Optimised policy achieves the lowest median handover latency among
+the three compared algorithms (see Table~\ref{tab:handover_kpi}), largely
+because the DQN agent learns to anticipate signal degradation from the
+RSRP/RSRQ trends rather than reacting only to threshold crossings.
+The RSRP-Based policy performs better than the Distance-Based one in mobile
+scenarios because received power is a more reliable proxy for link quality
+than geometry alone.
+
+\subsection{Federated Learning Benefits}
+The FL xApp converges to a global prediction model without requiring UE
+measurements to leave the gNB, in line with data-minimisation
+requirements of O-RAN privacy guidelines.
+The digital-twin gating further improves effective performance by filtering
+RL actions that are predicted to degrade KPIs, acting as a safety
+mechanism during early training stages.
+
+\subsection{MEC Offloading}
+AR/VR Streaming and Video Analytics exhibit the highest CPU utilisation,
+consistent with their compute-intensive processing pipelines.
+The Federated Learning service benefits disproportionately from high-memory
+nodes, suggesting that MEC host selection should consider both CPU and
+memory when placing FL aggregation tasks.
+
+\subsection{Limitations}
+\begin{itemize}
+  \item The current THz channel model does not incorporate molecular
+        absorption coefficients; this is a planned extension.
+  \item RL training is performed within the simulation loop; a
+        production deployment would require offline pre-training.
+  \item Results are based on synthetic traffic models; real-world
+        traces would strengthen the evaluation.
+\end{itemize}
+
+\subsection{Future Work}
+% TODO: expand with specific planned experiments.
+Future directions include: (i) multi-agent RL across gNBs, (ii) non-IID
+FedAvg variants (FedProx), (iii) full THz molecular absorption modelling,
+and (iv) integration with an open-source near-RT RIC (e.g., OpenAirInterface
+FlexRIC).
