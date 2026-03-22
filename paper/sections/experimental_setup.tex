@@ -1,0 +1,41 @@
+\section{Experimental Setup}
+\label{sec:setup}
+
+All experiments are conducted within the NS-3 O-RAN 6G framework described
+in Section~\ref{sec:architecture}.
+Table~\ref{tab:sim_config} summarises the primary simulation parameters.
+
+\input{tables/sim_config.tex}
+
+\subsection{Simulation Scenarios}
+We evaluate three mobility scenarios:
+\begin{itemize}
+  \item \textbf{Static}: UEs placed at fixed random positions; baseline
+        for PHY-layer characterisation.
+  \item \textbf{Pedestrian} ($v \approx 1$--$5$\,m/s): representative of
+        dense urban indoor/campus environments.
+  \item \textbf{Vehicular} ($v \approx 10$--$30$\,m/s): highway/motorway
+        handover stress test.
+\end{itemize}
+
+\subsection{Metrics}
+Primary KPIs evaluated are:
+\begin{itemize}
+  \item Handover success rate and handover latency (ms).
+  \item Per-UE downlink throughput (Mbps) and 95th-percentile latency.
+  \item RSRP (dBm), RSRQ (dB), and SINR (dB).
+  \item MEC service CPU/memory utilisation and end-to-end service latency.
+  \item FL convergence episode and final reward.
+  \item Digital-twin prediction accuracy (\%).
+\end{itemize}
+
+\subsection{Reproducibility}
+Each configuration is repeated over five independent seeds.
+Results files are saved to \texttt{results/data/} in CSV and JSON formats.
+The asset generator (\texttt{tools/paper/generate\_paper\_assets.py}) reads
+these files and produces all tables and figures in this paper.
+The full simulation and paper-build pipeline can be reproduced by running:
+\begin{verbatim}
+  python tools/paper/generate_paper_assets.py
+  cd paper && latexmk -pdf main.tex
+\end{verbatim}

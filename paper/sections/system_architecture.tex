@@ -1,0 +1,54 @@
+\section{System Architecture}
+\label{sec:architecture}
+
+Fig.~\ref{fig:architecture} illustrates the end-to-end architecture of the
+proposed NS-3 O-RAN 6G integration framework.
+
+\begin{figure}[htbp]
+  \centering
+  \input{figures/architecture.tex}
+  \caption{NS-3 O-RAN 6G integration framework architecture. UEs connect
+           to gNBs over NR/THz air interfaces; gNBs report KPIs to the
+           near-RT RIC via E2; xApps execute RL and FL control loops;
+           the digital-twin module feeds back predicted KPIs.}
+  \label{fig:architecture}
+\end{figure}
+
+\subsection{Radio Access Network Layer}
+The RAN layer consists of \(N_{\text{gNB}}\) gNB nodes, each serving up
+to \(N_{\text{UE}}\) user equipment (UE) nodes.
+Channel models support sub-6\,GHz NR and THz bands (0.1--1\,THz).
+Each gNB implements a Proportional Fair (PF) scheduler as the baseline and
+an RL-enhanced scheduler as the advanced variant.
+
+\subsection{Near-RT RIC and xApps}
+The near-RT RIC is modelled as a centralised controller that receives
+periodic E2 service model (SM) indication messages from all gNBs.
+Two xApps are implemented:
+\begin{itemize}
+  \item \textbf{Handover xApp}: uses a Deep Q-Network (DQN) to decide
+        source$\to$target handovers based on RSRP, RSRQ, and SINR reports.
+  \item \textbf{Federated Learning xApp}: orchestrates FedAvg rounds across
+        gNB-local models that predict UE throughput from radio measurements.
+\end{itemize}
+
+\subsection{Digital Twin Module}
+A lightweight regression model (gradient-boosted tree) is trained online
+using sliding-window measurements.
+Before the RIC applies an action, the twin predicts the post-action KPI
+and rejects actions predicted to worsen performance beyond a configurable
+threshold.
+
+\subsection{MEC Service Layer}
+MEC hosts are co-located with gNBs (edge) and with a regional data centre
+(cloud).
+Services (Video Analytics, AR/VR Streaming, IoT Processing, FL model
+aggregation) are modelled with measured CPU/memory utilisation and
+variable latency depending on host tier and active users.
+
+\subsection{Data Flow and Result Export}
+Simulation outputs are written to \texttt{results/data/} as CSV and JSON
+files.
+The \texttt{tools/paper/generate\_paper\_assets.py} script reads these
+outputs and produces \LaTeX{} tables and TikZ/PGFPlots figures that are
+directly included in this document.

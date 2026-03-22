@@ -1,0 +1,39 @@
+\section{Related Work}
+\label{sec:related}
+
+\subsection{O-RAN Simulation Platforms}
+Lacava \emph{et~al.}~\cite{ns3_oran2021} introduced ns-O-RAN, coupling NS-3
+with an O-DU/O-CU emulator and a near-RT RIC to study traffic steering via
+E2 interface reports.
+Our work extends this by adding 6G PHY abstractions (THz, massive MIMO) and
+an integrated MEC service layer.
+
+\subsection{AI/ML in O-RAN}
+Reinforcement learning has been applied to handover decisions in
+LTE/NR~\cite{dqn_handover2020}, showing that model-free agents can
+outperform threshold-based rules under non-stationary traffic.
+Federated learning~\cite{fedavg2017} allows gNBs to collaboratively train
+a shared model without centralising raw measurements, preserving data
+locality---a critical requirement in O-RAN deployments.
+
+\subsection{Digital Twins for Networks}
+Wu \emph{et~al.}~\cite{digital_twin_net2022} survey digital-twin
+architectures for IoT and 5G, highlighting predictive accuracy and
+synchronisation delay as key metrics.
+We adopt a lightweight regression-based twin that updates at each simulation
+step and is used to pre-validate RL actions.
+
+\subsection{MEC Integration}
+The ETSI MEC framework~\cite{mec_etsi2022} defines APIs for application
+lifecycle management at the network edge.
+Our simulation models MEC hosts co-located with gNBs and evaluates CPU/memory
+utilisation and end-to-end service latency under varying UE densities.
+
+\subsection{6G Candidate Technologies}
+THz communications offer multi-Tbps capacities at the cost of severe
+distance-dependent path loss~\cite{thz_6g2022}.
+We model THz links between UEs and small cells and study their interaction
+with MEC offloading decisions.
+
+% TODO: expand with 3–5 more directly competing works once paper
+%       submission venue is chosen.
