@@ -1,73 +1,146 @@
 %% TikZ architecture diagram – NS-3 O-RAN 6G Integration Framework
 %% Included via \input{figures/architecture.tex} in main.tex
 %% Run generate_paper_assets.py to regenerate figure stubs from results/.
+\documentclass[tikz, border=15pt]{standalone}
+
+%% Required Libraries
+\usetikzlibrary{positioning, fit, arrows.meta, shadows, backgrounds, calc, shapes.multipart}
+
+\begin{document}
+
 \begin{tikzpicture}[
-    font=\small,
-    node distance=0.9cm and 1.4cm,
-    box/.style={draw, rounded corners=3pt, minimum width=1.6cm,
-                minimum height=0.7cm, align=center, fill=#1!15},
-    arr/.style={-{Stealth[length=4pt]}, thick},
-    darr/.style={{Stealth[length=4pt]}-{Stealth[length=4pt]}, thick, dashed},
-    lbl/.style={font=\tiny, midway, fill=white, inner sep=1pt}
+    font=\sffamily\small,
+    >=Stealth,
+    % ── Node Styles ──
+    corebox/.style={
+        draw=#1!80!black, thick, rounded corners=3pt,
+        align=center, fill=#1!10, minimum height=0.8cm,
+        drop shadow={opacity=0.1, shadow xshift=1pt, shadow yshift=-1pt}
+    },
+    xapp/.style={
+        draw=violet!80!black, thick, rounded corners=2pt,
+        align=center, fill=violet!5, minimum height=0.6cm, font=\scriptsize
+    },
+    % ── Boundary Styles ──
+    domain/.style={
+        draw=#1!60, thick, dashed, rounded corners=6pt, 
+        inner sep=12pt, fill=#1!5, fill opacity=0.3, text opacity=1
+    },
+    % ── Interface Styles ──
+    interface/.style={->, thick, draw=black!70, rounded corners=4pt},
+    biinterface/.style={<->, thick, draw=black!70, rounded corners=4pt},
+    lbl/.style={
+        font=\sffamily\tiny\bfseries, midway, fill=white, 
+        inner sep=1.5pt, draw=black!20, rounded corners=2pt
+    },
+    o1lbl/.style={
+        font=\sffamily\tiny, near end, fill=white, 
+        inner sep=1pt, text=black!60
+    }
 ]
 
-%% ── UEs ──────────────────────────────────────────────────────────────────
-\node[box=blue] (ue1) {UE 1};
-\node[box=blue, below=0.35cm of ue1] (ue2) {UE 2};
-\node[box=blue, below=0.35cm of ue2] (ue3) {UE $N$};
-\node[fit=(ue1)(ue2)(ue3), draw, dotted, inner sep=4pt,
-      label=above:{\tiny User Equipment}] (ue_grp) {};
+%% =========================================================
+%% 1. SMO & Non-RT RIC (Cloud Layer)
+%% =========================================================
+\node[corebox=gray, minimum width=3.5cm, minimum height=1cm] (nonrt) at (6, 7) {\textbf{Non-RT RIC}\\ \scriptsize AI/ML Training \& Policy};
+\node[corebox=gray, right=0.5cm of nonrt, minimum width=2.5cm, minimum height=1cm] (rapp) {\textbf{rApps}\\ \scriptsize Network DT \& Intent};
 
-%% ── gNBs ─────────────────────────────────────────────────────────────────
-\node[box=green, right=1.6cm of ue1] (gnb1) {gNB 1\\{\tiny NR/THz}};
-\node[box=green, right=1.6cm of ue3] (gnb2) {gNB $M$\\{\tiny NR/THz}};
-\node[fit=(gnb1)(gnb2), draw, dotted, inner sep=4pt,
-      label=above:{\tiny RAN Layer}] (gnb_grp) {};
+\begin{scope}[on background layer]
+    \node[fit=(nonrt)(rapp), domain=gray, label={[font=\bfseries\small, text=gray!80!black]above:SMO (Service Management & Orchestration) - Cloud}] (smo_grp) {};
+\end{scope}
 
-%% ── MEC hosts ────────────────────────────────────────────────────────────
-\node[box=orange, right=1.5cm of gnb1] (mec1) {MEC\\Host 1};
-\node[box=orange, right=1.5cm of gnb2] (mec2) {MEC\\Host $M$};
-\node[fit=(mec1)(mec2), draw, dotted, inner sep=4pt,
-      label=above:{\tiny Edge Compute}] (mec_grp) {};
+%% =========================================================
+%% 2. Near-RT RIC Domain (Edge Layer)
+%% =========================================================
+\node[corebox=red, minimum width=3.5cm, minimum height=3cm] (nearrt_base) at (8, 2.5) {};
+\node[font=\bfseries, text=red!80!black, anchor=north] at (nearrt_base.north) {Near-RT RIC};
 
-%% ── Near-RT RIC ──────────────────────────────────────────────────────────
-\node[box=red, right=2.8cm of gnb1, yshift=-0.55cm] (ric) {Near-RT\\RIC};
+% xApps inside Near-RT RIC
+\node[xapp, right=0.2cm of nearrt_base.west, yshift=0.3cm] (xapp_ho) {HO\\xApp};
+\node[xapp, right=0.2cm of xapp_ho] (xapp_fl) {FL\\xApp};
+\node[xapp, right=0.2cm of xapp_fl] (xapp_ts) {TS\\xApp};
+\node[corebox=teal, minimum width=3.1cm, minimum height=0.6cm, above=0.2cm of nearrt_base.south, font=\scriptsize] (sdl) {Shared Data Layer (SDL) / DT};
 
-%% ── xApps ────────────────────────────────────────────────────────────────
-\node[box=violet, above right=0.3cm and 0.9cm of ric] (ho_xapp)
-      {HO\\xApp\\{\tiny DQN}};
-\node[box=violet, below right=0.3cm and 0.9cm of ric] (fl_xapp)
-      {FL\\xApp\\{\tiny FedAvg}};
+\begin{scope}[on background layer]
+    \node[fit=(nearrt_base), domain=red, inner sep=6pt] (ric_grp) {};
+\end{scope}
 
-%% ── Digital Twin ─────────────────────────────────────────────────────────
-\node[box=teal, below=0.8cm of ric] (twin) {Digital\\Twin};
+%% =========================================================
+%% 3. Multi-Access Edge Computing (MEC)
+%% =========================================================
+\node[corebox=orange, minimum width=2.5cm, minimum height=2.5cm] (mec) at (-1, 2.5) {};
+\node[font=\bfseries, text=orange!80!black, anchor=north] at (mec.north) {MEC Host};
+\node[corebox=white, minimum width=2cm, minimum height=0.6cm, font=\scriptsize, below=0.4cm of mec.north] (edge_ai) {Edge AI Server};
+\node[corebox=white, minimum width=2cm, minimum height=0.6cm, font=\scriptsize, above=0.2cm of mec.south] (local_cache) {Local Cache};
 
-%% ── Cloud ────────────────────────────────────────────────────────────────
-\node[box=gray, right=1.6cm of ho_xapp, yshift=-0.55cm] (cloud)
-      {Cloud / Non-RT\\RIC (A1)};
+\begin{scope}[on background layer]
+    \node[fit=(mec), domain=orange, inner sep=6pt] (mec_grp) {};
+\end{scope}
 
-%% ── Arrows ───────────────────────────────────────────────────────────────
-% UE <-> gNB  (air interface)
-\draw[darr] (ue1.east) -- node[lbl]{NR/THz} (gnb1.west);
-\draw[darr] (ue3.east) -- (gnb2.west);
+%% =========================================================
+%% 4. Disaggregated 6G RAN (Cell Site)
+%% =========================================================
+% O-CU (Central Unit)
+\node[corebox=green, minimum width=1.8cm] (ocu_cp) at (3.5, 3.2) {\textbf{O-CU-CP}};
+\node[corebox=green, minimum width=1.8cm] (ocu_up) at (3.5, 1.8) {\textbf{O-CU-UP}};
 
-% gNB -> near-RT RIC  (E2)
-\draw[arr] (gnb1.east) -- node[lbl,above]{E2} (ric.west|-gnb1);
-\draw[arr] (gnb2.east) -- (ric.west|-gnb2);
+% O-DU (Distributed Unit)
+\node[corebox=green, minimum width=3.5cm] (odu) at (3.5, 0) {\textbf{O-DU}\\ \scriptsize High-PHY, MAC, RLC};
 
-% RIC <-> xApps
-\draw[darr] (ric.north east) -- (ho_xapp.south west);
-\draw[darr] (ric.south east) -- (fl_xapp.north west);
+% O-RU (Radio Unit) & 6G Elements
+\node[corebox=green, minimum width=2.5cm] (oru) at (3.5, -2) {\textbf{O-RU}\\ \scriptsize Low-PHY / Beamforming};
+\node[corebox=cyan, minimum width=1.5cm, minimum height=0.6cm, font=\scriptsize, left=1cm of oru] (ris) {\textbf{RIS}\\ Controller};
 
-% RIC <-> Digital Twin
-\draw[darr] (ric.south) -- node[lbl,right]{KPI} (twin.north);
+\begin{scope}[on background layer]
+    \node[fit=(ocu_cp)(ocu_up)(odu)(oru)(ris), domain=green, label={[font=\bfseries\small, text=green!80!black]above:Disaggregated 6G RAN}] (ran_grp) {};
+\end{scope}
 
-% gNB <-> MEC
-\draw[darr] (gnb1.east|-mec1) -- node[lbl]{MEC API} (mec1.west);
-\draw[darr] (gnb2.east|-mec2) -- (mec2.west);
+%% =========================================================
+%% 5. User Equipment (UEs)
+%% =========================================================
+\node[corebox=blue, minimum width=1.5cm] (ue1) at (1.5, -4.5) {URLLC\\UE};
+\node[corebox=blue, minimum width=1.5cm] (ue2) at (3.5, -4.5) {eMBB\\UE};
+\node[corebox=blue, minimum width=1.5cm] (ue3) at (5.5, -4.5) {mMTC\\IoT};
 
-% xApps -> Cloud
-\draw[arr] (ho_xapp.east) -- (cloud.west|-ho_xapp);
-\draw[arr] (fl_xapp.east) -- (cloud.west|-fl_xapp);
+\begin{scope}[on background layer]
+    \node[fit=(ue1)(ue2)(ue3), domain=blue, label={[font=\bfseries\small, text=blue!80!black]below:User Equipment (UE) Swarm}] (ue_grp) {};
+\end{scope}
+
+%% =========================================================
+%% 6. Standardized Interfaces (Routing)
+%% =========================================================
+
+% A1 Interface (Non-RT RIC <-> Near-RT RIC)
+\draw[biinterface] (nonrt.south -| nearrt_base.north) -- node[lbl]{A1} (nearrt_base.north);
+
+% O1 Interfaces (SMO to all network elements - dashed gray)
+\draw[interface, dashed, draw=gray] (ocu_cp.west) -- ++(-0.5,0) |- node[o1lbl]{O1} (smo_grp.west);
+\draw[interface, dashed, draw=gray] (ocu_up.west) -- ++(-0.7,0) |- (smo_grp.west);
+\draw[interface, dashed, draw=gray] (odu.west)    -- ++(-0.9,0) |- (smo_grp.west);
+
+% E2 Interfaces (RAN to Near-RT RIC)
+\draw[interface] (ocu_cp.east) -- ++(1,0) |- node[lbl, near start]{E2} (nearrt_base.160);
+\draw[interface] (ocu_up.east) -- ++(1.5,0) |- node[lbl, near start]{E2} (nearrt_base.180);
+\draw[interface] (odu.east)    -- ++(2,0) |- node[lbl, near start]{E2} (nearrt_base.200);
+
+% F1 Interfaces (CU to DU)
+\draw[biinterface] (ocu_cp.south) -- node[lbl, left]{F1-c} (ocu_cp.south |- odu.north);
+\draw[biinterface] (ocu_up.south) -- node[lbl, right]{F1-u} (ocu_up.south |- odu.north);
+
+% Open Fronthaul (DU to RU)
+\draw[biinterface] (odu.south) -- node[lbl]{Open Fronthaul (eCPRI)} (odu.south |- oru.north);
+
+% RU to RIS
+\draw[interface, dashed, draw=cyan!80!black] (oru.west) -- node[lbl, above]{Control} (ris.east);
+
+% Air Interfaces (RU/RIS to UEs)
+\draw[biinterface, draw=blue!70] (oru.south) -- node[lbl, sloped, above]{THz/Sub-THz} (ue2.north);
+\draw[biinterface, draw=blue!70] (ris.south) -- node[lbl, sloped, above]{Reflected Path} (ue1.north);
+\draw[biinterface, draw=blue!70] (oru.south) -- (ue3.north);
+
+% MEC Routing (Data Plane)
+\draw[biinterface] (mec.east |- ocu_up.west) -- node[lbl, above]{N6 / Local UPF} (ocu_up.west);
 
 \end{tikzpicture}
+
+\end{document}
